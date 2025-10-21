@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: jetson-exporter
+  name: jetson-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: jetson-exporter
+  template:
+    metadata:
+      labels:
+        app: jetson-exporter
+    spec:
+      containers:
+        - name: exporter
+          image: {{ .Values.image }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          command: ["python3", "-m", "jetson_stats_node_exporter"]
+          args: {{ toJson .Values.args }}
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: "/run/jtop.sock"
+              name: jtop-sock
+      hostNetwork: true
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      volumes:
+        - name: jtop-sock
+          hostPath:
+            path: "/run/jtop.sock"
+            type: Socket
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}

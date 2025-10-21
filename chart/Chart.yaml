@@ -1,0 +1,6 @@
+apiVersion: v2
+name: jetson-exporter
+description: Chart for DaemonSet of the Nvidia Jetson Prometheus Node Exporter for prometheus-stack
+type: application
+version: 0.1.0
+appVersion: "0.1.4"

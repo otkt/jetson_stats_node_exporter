@@ -1,0 +1,26 @@
+image: zay32/jetson-stats-node-exporter:latest
+
+args:
+  - "--port=9101"
+  - "--update_period=1"
+  - "--logfile_cleanup_interval_hours=24"
+
+containerPort: 9101
+
+imagePullSecrets: []
+imagePullPolicy: Always
+
+# node selector for daemonset pods
+nodeSelector:
+  node-role.kubernetes.io/edge: ''
+
+# tolerations for daemonset pods
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/edge
+    operator: Exists
+
+# enable ServiceMonitor template for prometheus-stack
+serviceMonitor:
+  enabled: true
+
