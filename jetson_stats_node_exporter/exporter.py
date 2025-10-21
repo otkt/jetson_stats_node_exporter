@@ -57,6 +57,7 @@ class JetsonExporter(object):
             gpu_gauge.add_metric([gpu_name, "freq"], value=self.jetson.jtop_stats["gpu"][gpu_name]["freq"]["cur"])
             gpu_gauge.add_metric([gpu_name, "min_freq"], value=self.jetson.jtop_stats["gpu"][gpu_name]["freq"]["min"])
             gpu_gauge.add_metric([gpu_name, "max_freq"], value=self.jetson.jtop_stats["gpu"][gpu_name]["freq"]["max"])
+            gpu_gauge.add_metric([gpu_name, "load"], value=self.jetson.jtop_stats["gpu"][gpu_name]["status"]["load"])
 
         return gpu_gauge
 
@@ -114,9 +115,12 @@ class JetsonExporter(object):
             unit="Hz"
         )
 
-        emc_gauge.add_metric(["total"], value=self.jetson.jtop_stats["mem"]["EMC"]["cur"])
-        emc_gauge.add_metric(["used"], value=self.jetson.jtop_stats["mem"]["EMC"]["max"])
-        emc_gauge.add_metric(["cached"], value=self.jetson.jtop_stats["mem"]["EMC"]["min"])
+        if "cur" in self.jetson.jtop_stats["mem"]["EMC"]:
+            emc_gauge.add_metric(["total"], value=self.jetson.jtop_stats["mem"]["EMC"]["cur"])
+        if "max" in self.jetson.jtop_stats["mem"]["EMC"]:
+            emc_gauge.add_metric(["used"], value=self.jetson.jtop_stats["mem"]["EMC"]["max"])
+        if "min" in self.jetson.jtop_stats["mem"]["EMC"]:
+            emc_gauge.add_metric(["cached"], value=self.jetson.jtop_stats["mem"]["EMC"]["min"])
 
         return emc_gauge
 
